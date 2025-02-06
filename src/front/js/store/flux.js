@@ -2,6 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: null,
+			user: null,
 			demo: [
 				{
 					title: "FIRST",
@@ -67,7 +68,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ error: "Error en el registro" });
 				}
 			},
-			
+
+			logout: () => {
+                setStore({ user: null });
+                console.log("User logged out");
+            },
 			
 
 

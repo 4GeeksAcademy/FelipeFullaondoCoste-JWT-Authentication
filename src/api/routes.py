@@ -5,9 +5,11 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
 
 api = Blueprint('api', __name__)
 CORS(api)
+bcrypt = Bcrypt()
 
 
 @api.route('/users', methods=['GET'])
@@ -33,22 +35,13 @@ def create_user():
         password=data['password'],
         is_active=data.get('is_active', True)
     )
+    new_user.password = bcrypt.generate_password_hash(new_user.password).decode('utf-8')
+    print(new_user.password)
 
     db.session.add(new_user)
     db.session.commit()
     return jsonify(new_user.serialize()), 201
 
-@api.route('/user/<int:id>', methods=['PUT'])
-def update_user(id):
-    data = request.get_json()
-    user = User.query.get_or_404(id)
-
-    user.email = data.get('email', user.email)
-    user.password = data.get('password', user.password)
-    user.is_active = data.get('is_active', user.is_active)
-
-    db.session.commit()
-    return jsonify(user.serialize())
 
 @api.route('/user/<int:id>', methods=['DELETE'])
 def delete_user(id):
@@ -76,16 +69,15 @@ def login_user():
     if not email or not password:
         return jsonify({"message": "Email and password are required"}), 400
 
-    # Aquí deberías implementar la lógica para verificar las credenciales del usuario
     user = User.query.filter_by(email=email).first()
-    if user and user.password == password:
-        # Suponiendo que el login fue exitoso
+    if user and bcrypt.check_password_hash(user.password, data["password"]) :
         return jsonify({
             "message": "Login successful",
             "user": user.serialize()
         }), 200
     else:
         return jsonify({"message": "Invalid email or password"}), 401
+    
 
 
 if __name__ == '__main__':
