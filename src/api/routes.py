@@ -6,10 +6,13 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+
 
 api = Blueprint('api', __name__)
 CORS(api)
 bcrypt = Bcrypt()
+
 
 
 @api.route('/users', methods=['GET'])
@@ -71,13 +74,18 @@ def login_user():
 
     user = User.query.filter_by(email=email).first()
     if user and bcrypt.check_password_hash(user.password, data["password"]) :
+        access_token = create_access_token(identity=str(user.id))
         return jsonify({
-            "message": "Login successful",
+            "message": "Login successful", "access_token":access_token,
             "user": user.serialize()
         }), 200
     else:
         return jsonify({"message": "Invalid email or password"}), 401
     
+@api.route('/private', methods=['GET'])
+@jwt_required()
+def private_route():
+    return jsonify({"message": f"Bienvenido, esta es una ruta privada"}), 200
 
 
 if __name__ == '__main__':

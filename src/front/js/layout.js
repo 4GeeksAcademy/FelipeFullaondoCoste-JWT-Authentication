@@ -12,6 +12,8 @@ import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import Login from "./component/Login";
 import Register from "./component/Register";
+import { Private } from "./component/Private";
+import PrivateRoute from "./component/PrivateRoute";
 
 //create your first component
 const Layout = () => {
@@ -32,6 +34,8 @@ const Layout = () => {
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
+                        <Route element={<PrivateRoute element={<Private />} />} path="/private" /> {/* si no estoy logueado me redirige a /login */}
+                        <Route element={<Private />} path="/private" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

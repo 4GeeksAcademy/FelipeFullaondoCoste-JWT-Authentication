@@ -1,6 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			token: localStorage.getItem("token") || null,
 			message: null,
 			user: null,
 			demo: [
@@ -31,8 +32,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json();
 			
 					if (resp.ok) {
-						setStore({ user: data });
-						return data;
+						localStorage.setItem("token", data.access_token);
+            			setStore({ user: data.user, token: data.access_token });
+            			return data;
 					} else {
 						setStore({ error: data.message || "Login failed" });
 						console.log("Error de login:", data.message);
@@ -69,8 +71,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
+			setToken: (token) => {
+                setStore({ token });
+            },
 			logout: () => {
-                setStore({ user: null });
+                localStorage.removeItem("token");
+                setStore({ token: null, user: null });
                 console.log("User logged out");
             },
 			

@@ -14,33 +14,28 @@ export const Home = () => {
     return (
         <div className="text-center mt-5">
             {store.user ? (
-                <button onClick={handleLogout} className="btn btn-danger">
-                    LogOut
-                </button>
+                <>
+
+                    <Link to="/private" className="btn btn-warning m-2">
+                        Ruta privada
+                    </Link>
+                    <button onClick={handleLogout} className="btn btn-danger m-2">
+                        LogOut
+                    </button>
+                </>
             ) : (
 				<>
-					<Link to="/login">
+					<Link to="/login" className="btn btn-primary m-2">
 						<h1>Ir a Login</h1>
 					</Link>
-					<Link to="/register">
+					<Link to="/register" className="btn btn-primary m-2">
 						<h1>Registrarse</h1>
 					</Link>
+                    <Link to="/private" className="btn btn-warning m-2">
+                        Ruta privada
+                    </Link>
 				</>
             )}
-
-            <h1>Hello Rigo!!</h1>
-            <p>
-                <img src={rigoImageUrl} alt="rigo-baby" />
-            </p>
-            <div className="alert alert-info">
-                {store.message || "Loading message from the backend (make sure your python backend is running)..."}
-            </div>
-            <p>
-                This boilerplate comes with lots of documentation:{" "}
-                <a href="https://start.4geeksacademy.com/starters/react-flask">
-                    Read documentation
-                </a>
-            </p>
         </div>
     );
 };
